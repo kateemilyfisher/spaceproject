@@ -68,7 +68,7 @@ class GetDataCommand extends Command
       $this->manager->flush();
 
       $spaceStationPosition = $this->getSpaceStationPosition();
-      
+
 
       $latitude = $spaceStationPosition['iss_position']['latitude'];
       $longitude = $spaceStationPosition['iss_position']['longitude'];
@@ -77,6 +77,7 @@ class GetDataCommand extends Command
       $position->setLatitude($latitude);
       $position->setLongitude($longitude);
       $position->setTimestamp($timeStamp);
+
       $this->manager->persist($position);
       $this->manager->flush();
     }
