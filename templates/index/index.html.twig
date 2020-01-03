@@ -4,7 +4,7 @@
 
 {% block body %}
 <style>
-    body { background-color: #252537; color: #FFF; }
+    body { background-image: url('https://c4.wallpaperflare.com/wallpaper/755/965/110/stars-galaxy-blue-milky-way-wallpaper-preview.jpg'); color: #FFF; }
     .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
     .example-wrapper2 { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
@@ -23,18 +23,18 @@
       {% endfor %}
     </ul>
 </div>
+
 <div class="example-wrapper2">
     Current location of the International Space Station (ISS)
 
-    {# Need to pass in the PHP data not the JS URL to the api request #}
     <div id="map" style="width: 600px; height: 400px;">
         <script>
         var map = L.map('map').setView([0,0], 2);
-
+    {% for position in positions %}
         function moveISS () {
           $.getJSON('http://api.open-notify.org/iss-now.json?callback=?', function(data) {
-              var lat = data['iss_position']['latitude'];
-              var lon = data['iss_position']['longitude'];
+              var lat = {{ position.latitude }};
+              var lon = {{ position.longitude }};
 
               iss.setLatLng([lat, lon]);
               map.panTo([lat, lon], animate=true);
@@ -62,7 +62,8 @@
         moveISS();
 
         </script>
-      </div>
+      {% endfor %}
+    </div>
 
 </div>
 {% endblock %}

@@ -24,13 +24,17 @@ class IndexController extends AbstractController
         $astronautRepo = $this->getDoctrine()->getRepository('App:Astronaut');
         $astronauts = $astronautRepo->findAll();
 
+        $results = $positionRepo->findAll();
+
+        // this needs fixing
         $position = new Position();
         $latitude = $position->getLatitude();
         $longitude = $position->getLongitude();
-        // this needs fixing
+
 
         return $this->render('index/index.html.twig', [
             'astronauts' => $astronauts,
+            'positions' => $results,
             'controller_name' => 'IndexController',
         ]);
     }
