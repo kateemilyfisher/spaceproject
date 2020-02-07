@@ -11,6 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use App\Entity\SpaceStation;
 use App\Entity\Astronaut;
 use App\Entity\Position;
+use App\Entity\Picture;
 use App\Repository\SpaceStationRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,7 +36,7 @@ class GetDataCommand extends Command
     {
       $this
         // the short description shown while running "php bin/console list"
-        ->setDescription('Fetches the latest API data.');
+        ->setDescription('Fetches the latest Space API data.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -80,6 +81,21 @@ class GetDataCommand extends Command
 
       $this->manager->persist($position);
       $this->manager->flush();
+
+      $pictureOfTheDay = $this->getPictureOfTheDay();
+      $date = $pictureOfTheDay['date'];
+      $url = $pictureOfTheDay['url'];
+      $mediaType = $pictureOfTheDay['media_type'];
+      $explanation = $pictureOfTheDay['explanation'];
+
+      $picture = new Picture();
+      $picture->setDate(new \DateTime($date));
+      $picture->setUrl($url);
+      $picture->setMediaType($mediaType);
+      $picture->setExplanation($explanation);
+
+      $this->manager->persist($picture);
+      $this->manager->flush();
     }
 
     private function getPeopleInSpace() {
@@ -98,6 +114,21 @@ class GetDataCommand extends Command
     private function getSpaceStationPosition() {
       $request = curl_init();
       $url = "http://api.open-notify.org/iss-now.json";
+
+      curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
+      curl_setopt($request, CURLOPT_URL, $url);
+
+      $response = curl_exec($request);
+      curl_close($request);
+
+      return json_decode($response, true);
+    }
+
+    public function getPictureOfTheDay()
+    {
+
+      $request = curl_init();
+      $url = "https://api.nasa.gov/planetary/apod?api_key=PojrU2dORqCBfOquvnuJlTw0fBGRBHmm42ppfruk";
 
       curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($request, CURLOPT_URL, $url);
